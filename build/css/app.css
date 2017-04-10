@@ -146,6 +146,10 @@ body {
   background-color: #417b41;
 }
 
+.select.is-disabled {
+  opacity: .5;
+}
+
 @media (min-width: 1000px) {
 
   body {

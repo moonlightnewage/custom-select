@@ -2,11 +2,17 @@ export default class Select {
     constructor(options) {
         this.selector = document.querySelectorAll(options.selector);
         this.cssClass = options.cssClass;
+        
         this._init();
     }
     
     _init() {
         this._createDom();
+//        for (let i = 0; i < this.selector.length; i++) {
+//            if (this.selector[i].disabled) {
+//                return false;
+//            }
+//        }
         this._onClick();
     }
     
@@ -16,16 +22,15 @@ export default class Select {
         this._createList();
     }
     
-    
     _createParent() {
         for (let i = 0; i < this.selector.length; i++) {
             this.selector[i].style.display = 'none';
             
             let wrapper = document.createElement('div');
             wrapper.className = 'select js-select-wrapper';
-            if (this.cssClass) {
-                wrapper.classList.add(this.cssClass);
-            }
+            
+            if (this.cssClass) wrapper.classList.add(this.cssClass);
+            if(this.selector[i].disabled) wrapper.classList.add('is-disabled');
             
             wrapper.innerHTML = this.selector[i].outerHTML;
             this.selector[i].parentNode.replaceChild(wrapper, this.selector[i]);
@@ -37,9 +42,12 @@ export default class Select {
        for (let i = 0; i < this.parent.length; i++) {
            let placeholder = document.createElement('span');
            placeholder.className = 'select__placeholder js-select-placeholder';
-           placeholder.innerHTML = this.selector[i].children[0].innerHTML;
            
-           console.log(this.selector[i].children[0].innerHTML);
+           for (let j = 0; j < this.selector[i].childElementCount; j++) {
+               let isSelected = this.selector[i].children[j].hasAttribute('selected');
+               if (isSelected) placeholder.innerHTML = this.selector[i].children[j].innerHTML;
+           }
+           
            this.parent[i].appendChild(placeholder);
        }
     }
@@ -106,6 +114,14 @@ export default class Select {
     
     _insertValue(e) {
         let el = e.target.parentElement;
+        let index = [].indexOf.call(el.children, e.target);
+        let options = e.currentTarget.querySelectorAll('option');
+        console.log(options[index]);
         el.previousElementSibling.innerHTML = e.target.innerHTML;
+        for (let i = 0; i < options.length; i++) {
+            let isSelected = options[i].hasAttribute('selected');
+            if (isSelected) options[i].removeAttribute('selected');
+        }
+        options[index].setAttribute('selected', '');
     }
 }
